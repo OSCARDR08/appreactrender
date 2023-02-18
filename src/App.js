@@ -3,14 +3,14 @@ import './App.css';
 import {Home} from './Home';
 import {Department} from './Department';
 import {Employee} from './Employee';
-import {BrowserRouter, Route, Routes,NavLink} from 'react-router-dom';
+import {BrowserRouter as Router, Routes,Link, Route} from 'react-router-dom';
 
 
 
 function App() {
   return (
 
-  <BrowserRouter>
+  <Router>
     <div className="App container">
       <h3 className="d-flex justify-content-center m-3">
 
@@ -19,19 +19,19 @@ function App() {
       <nav className="navbar navbar-expand-sm bg-light navbar-dark">
           <ul className="navbar-nav" >
               <li className="nav-item- m-1">
-                <NavLink className="btn btn-light btn-outline-primary" to="/Home">
+                <Link className="btn btn-light btn-outline-primary" to="/Home">
                     Home
-                </NavLink>
+                </Link>
               </li> 
               <li className="nav-item- m-1">
-                <NavLink className="btn btn-light btn-outline-primary" to="/Department">
+                <Link className="btn btn-light btn-outline-primary" to="/Department">
                     Department
-                </NavLink>
+                </Link>
               </li> 
               <li className="nav-item- m-1">
-                <NavLink className="btn btn-light btn-outline-primary" to="/Employee">
+                <Link className="btn btn-light btn-outline-primary" to="/Employee">
                     Employee
-                </NavLink>
+                </Link>
               </li> 
           </ul>
       </nav>
@@ -43,7 +43,7 @@ function App() {
       </Routes>
     </div>
 
-  </BrowserRouter>
+  </Router>
   );
 }
 
