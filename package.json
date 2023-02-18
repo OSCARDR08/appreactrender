@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^13.5.0",
     "build-path": "^1.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express-fileupload": "^1.4.0",
     "mysql": "^2.18.1",
     "react": "^18.2.0",
