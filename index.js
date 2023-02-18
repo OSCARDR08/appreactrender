@@ -11,7 +11,7 @@ const port = process.env.PORT || 3001;
 // Creacion conexion a la base de datos
 
 var connection =mysql.createConnection({
-   host:'mysql-1wof:3306',
+   host:'https://adminer-tslx.onrender.com',
    user:'mysql',
    password:'evPeMzBLuSA69qIJjRbNJS5G0XE4ZOwp',
    database:'mysql'
