@@ -4,13 +4,15 @@ const {request, response } = require("express");
 var cors = require('cors');
 var mysql = require('mysql');
 const path = require('path');
+const dotenv = require('dotenv');
 
 
 
+dotenv.config();
 
 
 const buildPath = path.join(__dirname, 'build')
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 // Creacion conexion a la base de datos
 
@@ -39,22 +41,27 @@ app.use('/Photos', Express.static(__dirname+'/Photos'));
 // Se habilita el puerto del servidor
 app.listen(port,()=>{
 
-    try{
+   
 
         connection.connect(function(err){
-            if(err) throw err;
-            console.log("Connected to DB");
+
+            try{
+                
+                if(err) throw err;
+                console.log("Connected to DB");
+
+            }catch(err){
+
+                console.log("No se pudo conectar a la BD.");
+                console.log("Error entro en catch: " + err);
+        
+            }
+        
     
         });
 
 
-    }catch(err){
-
-        console.log("No se pudo conectar a la BD.");
-        console.log("Error entro en catch: " + err);
-
-    }
-
+   
    
 });
 
