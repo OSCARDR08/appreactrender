@@ -166,15 +166,13 @@ const Gestareas = () => {
     })
       setShowEdit(true);
     }
-    
-
-    
+        
 
     const handlePut=()=>{
       //e.preventDefault();
       //let jwttoken = sessionStorage.getItem("jwttoken");
       axios.put(variables.API_URL+"api/tareas/"+tareaId,{
-            idtarea: idtarea,
+            idtarea: id,
             idcliente : cliente,
             idtipotarea: tTarea,
             fechainicio: inicia,
