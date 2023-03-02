@@ -5,22 +5,22 @@ var cors = require('cors');
 var mysql = require('mysql');
 const path = require('path');
 const dotenv = require('dotenv');
-
+const morgan = require('morgan');
 
 
 dotenv.config();
 
 
-const buildPath = path.join(__dirname, 'build')
-const port = process.env.PORT || 3000;
+const buildPath = path.join(__dirname, 'build');
+const port = process.env.PORT;
 
-// Creacion conexion a la base de datos
+// Creacion conexion a la base de datoscl
 
 var connection =mysql.createConnection({
-   host:'mysql-1wof',
-   user:'mysql',
-   password:'evPeMzBLuSA69qIJjRbNJS5G0XE4ZOwp',
-   database:'mysql'
+   host: process.env.HOST,
+   user: process.env.MYSQL_USER,
+   password: process.env.MYSQL_PASSWORD,
+   database: process.env.MYSQL_DATABASE
 });
 
 
@@ -30,18 +30,10 @@ var app = Express();
 //Habilita el parseo de las url
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-
 app.use(cors());
 
-var fileUpload = require('express-fileupload');
-var fs = require('fs');
-app.use(fileUpload());
-app.use('/Photos', Express.static(__dirname+'/Photos'));
-
 // Se habilita el puerto del servidor
-app.listen(port,()=>{
-
-   
+app.listen(port,()=>{  
 
         connection.connect(function(err){
 
@@ -59,23 +51,34 @@ app.listen(port,()=>{
         
     
         });
-
-
-   
    
 });
 
 
+//Get de clientes para dropdown clientes
+app.get('/api/clientes/cmblst',(request,response)=> {
 
-app.get('*', (request,response)=>{
-    response.sendFile(path.join(buildPath, 'index.html'))
+    var query = `SELECT ID_CLIENTE idcliente,PRIMER_NOMBRE nombercliente FROM CLIENTES`;
+
+    connection.query(query,function(err, rows,fields){
+   
+            if(err){
+
+                 response.send('Failed');
+                 console.log(err);
+            }
+
+
+        response.send(rows);
+
+    });
+
 });
 
+//Get de tipos de tareas para dropdown tipo tareas
+app.get('/api/tipotareas/cmblst',(request,response)=> {
 
-app.get('/api/department',(request,response)=> {
-
-
-    var query = `SELECT * FROM DEPARTMENT`;
+    var query = `SELECT ID_TIPO_TAREA idtipotarea,TIPO_TAREA tipotarea FROM TIPO_TAREA`;
     connection.query(query,function(err, rows,fields){
 
             if(err){
@@ -89,78 +92,21 @@ app.get('/api/department',(request,response)=> {
 
 });
 
-app.post('/api/department',(request,response)=> {
+app.get('/api/tareas/grdlst',(request,response)=> {
 
+    var query = `SELECT
+                     T..ID_TAREA idtarea
+                    ,C.PRIMER_NOMBRE nombrecliente
+	                ,TT.TIPO_TAREA tipotarea
+	                ,T.FECHA_INICIO fechainicio
+	                ,T.PRECIO_TAREA  precio
+                    ,COMENTARIO comentario                   
+                 FROM CLIENTES C 
+	             JOIN TAREAS T 
+		            ON C.ID_CLIENTE=T.ID_CLIENTE
+                 JOIN TIPO_TAREA TT
+		            ON T.ID_TIPO_TAREA=TT.ID_TIPO_TAREA`;
 
-    var query = `INSERT INTO DEPARTMENT(DEPARTMENTNAME) values (?)`;
-    var values =  [
-        request.body['DepartmentName']
-    ];
-
-    connection.query(query,values,function(err, rows,fields){
-
-            if(err){
-
-                 response.send('Failed');
-                 console.log(err);
-            }
-        response.json('Added Success!');
-
-    });
-
-});
-
-app.put('/api/department',(request,response)=> {
-
-
-    var query = `UPDATE DEPARTMENT SET DepartmentName=? WHERE DepartmentId=?`;
-   
-    var values =  [
-        request.body['DepartmentName'],
-          request.body['DepartmentId']
-    ];
-
-    connection.query(query,values,function(err, rows,fields){
-
-            if(err){
-
-                 response.send('Failed');
-                 console.log(err);
-            }
-        response.json('Updataed Successfully!');
-
-    });
-
-});
-
-
-app.delete('/api/department/:id',(request,response)=> {
-
-    var query = `DELETE FROM DEPARTMENT WHERE DepartmentId=?`;
-   
-    var values =  [        
-        parseInt(request.params.id)    
-    ];
-
-    connection.query(query,values,function(err, rows,fields){
-
-            if(err){
-
-                 response.send('Failed');
-                 console.log(err);
-            }
-        response.json('Deleted Successfully!');
-
-    });
-
-});
-
-
-
-app.get('/api/employee',(request,response)=> {
-
-
-    var query = `SELECT * FROM EMPLOYEE`;
     connection.query(query,function(err, rows,fields){
 
             if(err){
@@ -174,69 +120,24 @@ app.get('/api/employee',(request,response)=> {
 
 });
 
-app.post('/api/employee',(request,response)=> {
+//Agregar nueva tarea
+app.post('/api/tareas',(request,response)=> {
 
 
-    var query = `INSERT INTO EMPLOYEE(EmployeeName,Department,DateOfJoining,PhotoFileName) 
-     values(?,?,?,?)`;
-    var values =  [
-        request.body['EmployeeName'],
-        request.body['Department'],
-        request.body['DateOfJoining'],
-        request.body['PhotoFileName']
-    ];
-
-    connection.query(query,values,function(err, rows,fields){
-
-            if(err){
-
-                 response.send('Failed');
-                 console.log(err);
-            }
-        response.json('Added Success!');
-
-    });
-
-});
-
-app.put('/api/employee',(request,response)=> {
-
-
-    var query = `UPDATE EMPLOYEE 
-                 SET EmployeeName=?,
-                     Department =?,
-                     DateOfJoining=?,
-                     PhotoFileName=? 
-                WHERE EmployeeId=?`;
-   
-    var values =  [
-        request.body['EmployeeName'],
-        request.body['Department'],
-        request.body['DateOfJoining'],
-        request.body['PhotoFileName'],
-        request.body['EmployeeId']
-    ];
-
-    connection.query(query,values,function(err, rows,fields){
-
-            if(err){
-
-                 response.send('Failed');
-                 console.log(err);
-            }
-        response.json('Updataed Successfully! ' + request.body['EmployeeId'] );
-
-    });
-
-});
-
-
-app.delete('/api/employee/:id',(request,response)=> {
-
-    var query = `DELETE FROM EMPLOYEE WHERE EmployeeId=?`;
-   
-    var values =  [        
-        parseInt(request.params.id)    
+    var query = `INSERT INTO TAREAS(ID_TIPO_TAREA,
+                                    ID_CLIENTE,
+                                    FECHA_INICIO,
+                                    FECHA_FIN,
+                                    PRECIO_TAREA,
+                                    COMENTARIO
+                                    ) VALUES(?,?,?,?,?,?);`;
+    var values =  [   
+        request.body['idtipotarea'],
+        request.body['idcliente'],
+        request.body['fechainicio'],
+        request.body['fechafin'],
+        request.body['precio'],
+        request.body['comentario']
     ];
     
     connection.query(query,values,function(err, rows,fields){
@@ -246,28 +147,57 @@ app.delete('/api/employee/:id',(request,response)=> {
                  response.send('Failed');
                  console.log(err);
             }
-        response.json('Deleted Successfully!');
+        response.json('Task Added Success!');
 
     });
 
 });
 
 
-app.post('/api/employee/savefile',(request,response)=> {
+// Actualizar tarea existente
+app.put('/api/tareas',(request,response)=> {
 
-    fs.writeFile("./Photos/" + request.files.file.name,
-                               request.files.file.data, 
-                               function(err){
+    var query = `
+         UPDATE TAREAS
+         SET
+            ID_TIPO_TAREA = ?,
+            ID_CLIENTE = ?,
+            FECHA_INICIO = ?,
+            FECHA_FIN = ?,
+            PRECIO_TAREA = ?,
+            COMENTARIO=?
+         WHERE ID_TAREA = ?`;
+   
+    var values =  [
+        request.body['idtipotarea'],
+        request.body['idcliente'],
+        request.body['fechainicio'],
+        request.body['fechafin'],
+        request.body['precio'],
+        request.body['comentario'],
+        request.body['idtarea']
+    ];
 
-                                    if(err){
+            connection.query(query,values,function(err, rows,fields){
 
-                                    return console.log(err);
-                                    }
+                    if(err){
 
-                                response.json(request.files.file.name); 
-               })
+                        response.send('Failed');
+                        console.log(err);
+                    }
+                response.json('Task Updataed Successfully!');
 
-})
+            });
+});
+
+
+app.get('*',(request,response)=>{
+
+    response.sendFile(path.join(buildPath,'index.html'));
+});
+
+
+
 
 
 

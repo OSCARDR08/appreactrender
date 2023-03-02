@@ -1,50 +1,22 @@
+import React from 'react'
 
-import './App.css';
-import {Home} from './Home';
-import {Department} from './Department';
-import {Employee} from './Employee';
-import {BrowserRouter as Router, Routes,Link, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify';
+import Gestareas from './components/Gestareas';
+import Mantotareas from './components/Mantotareas';
 
-
-
-function App() {
+const App = () => {
   return (
-
-  <Router>
-    <div className="App container">
-      <h3 className="d-flex justify-content-center m-3">
-
-         ReactJS Frontend
-      </h3>
-      <nav className="navbar navbar-expand-sm bg-light navbar-dark">
-          <ul className="navbar-nav" >
-              <li className="nav-item- m-1">
-                <Link className="btn btn-light btn-outline-primary" to="/Home">
-                    Home
-                </Link>
-              </li> 
-              <li className="nav-item- m-1">
-                <Link className="btn btn-light btn-outline-primary" to="/Department">
-                    Department
-                </Link>
-              </li> 
-              <li className="nav-item- m-1">
-                <Link className="btn btn-light btn-outline-primary" to="/Employee">
-                    Employee
-                </Link>
-              </li> 
-          </ul>
-      </nav>
-
-      <Routes>
-        <Route path='/home' element={<Home/>}/>
-        <Route path='/Department' element={<Department/>}/>
-        <Route path='/Employee' element={<Employee/>}/>
-      </Routes>
+    <div>
+      <ToastContainer></ToastContainer>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Gestareas/>}/>
+          <Route path="/manto:id" element={<Mantotareas/>}/>
+        </Routes>
+      </Router>
     </div>
-
-  </Router>
-  );
+  )
 }
 
-export default App;
+export default App
