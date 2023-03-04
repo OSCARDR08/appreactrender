@@ -11,7 +11,7 @@ const morgan = require('morgan');
 dotenv.config();
 
 
-const buildPath = path.join(__dirname, 'build');
+//const buildPath = path.join(__dirname, 'build');
 const port = process.env.PORT;
 
 // Creacion conexion a la base de datoscl
@@ -120,6 +120,39 @@ app.get('/api/tareas/grdlst',(request,response)=> {
 
 });
 
+
+app.get('/api/tareas/grdlst/:id',(request,response)=> {
+
+    var query = `SELECT
+                     T.ID_TAREA idtarea
+                    ,C.PRIMER_NOMBRE nombrecliente
+	                ,TT.TIPO_TAREA tipotarea
+	                ,T.FECHA_INICIO fechainicio
+	                ,T.PRECIO_TAREA  precio
+                    ,COMENTARIO comentario                   
+                 FROM CLIENTES C 
+	             JOIN TAREAS T 
+		            ON C.ID_CLIENTE=T.ID_CLIENTE
+                 JOIN TIPO_TAREA TT
+		            ON T.ID_TIPO_TAREA=TT.ID_TIPO_TAREA
+                 WHERE T.ID_TAREA =?`;
+
+    var values = [request.params.id];
+
+    connection.query(query,values,function(err, rows,fields){
+
+            if(err){
+
+                 response.send('Failed');
+                 console.log(err);
+            }
+        response.send(rows);
+
+    });
+
+});
+
+
 //Agregar nueva tarea
 app.post('/api/tareas',(request,response)=> {
 
@@ -193,7 +226,7 @@ app.put('/api/tareas',(request,response)=> {
 
 app.get('*',(request,response)=>{
 
-    response.sendFile(path.join(buildPath,'index.html'));
+   // response.sendFile(path.join(buildPath,'index.html'));
 });
 
 
