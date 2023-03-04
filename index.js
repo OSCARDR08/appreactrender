@@ -95,7 +95,7 @@ app.get('/api/tipotareas/cmblst',(request,response)=> {
 app.get('/api/tareas/grdlst',(request,response)=> {
 
     var query = `SELECT
-                     T..ID_TAREA idtarea
+                     T.ID_TAREA idtarea
                     ,C.PRIMER_NOMBRE nombrecliente
 	                ,TT.TIPO_TAREA tipotarea
 	                ,T.FECHA_INICIO fechainicio
