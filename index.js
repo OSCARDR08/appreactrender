@@ -11,7 +11,7 @@ const morgan = require('morgan');
 dotenv.config();
 
 
-//const buildPath = path.join(__dirname, 'build');
+const buildPath = path.join(__dirname, 'build');
 const port = process.env.PORT;
 
 // Creacion conexion a la base de datoscl
@@ -226,7 +226,7 @@ app.put('/api/tareas',(request,response)=> {
 
 app.get('*',(request,response)=>{
 
-   // response.sendFile(path.join(buildPath,'index.html'));
+    response.sendFile(path.join(buildPath,'index.html'));
 });
 
 
