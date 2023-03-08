@@ -54,6 +54,8 @@ const Gestareas = () => {
     const [selectedValuet, setSelectedValuet] = useState(null);
     const [query, setQuery] = useState("");
     const [post, setPost]=useState();
+    const [post1, setPost1]=useState();
+    const [post3, setPost3]=useState();
     const [showEdit, setShowEdit]=useState(false);
     const [showDetail, setShowDetail]=useState(false);
     const[tareaId, setTareaId]=useState();
@@ -71,12 +73,12 @@ const Gestareas = () => {
 
     const handleChange = value => {
       setSelectedValue(value);
-      setCliente(value.nombrecliente)
+      setCliente(value.idcliente)
     }
 
     const handleChanget = valuet => {
       setSelectedValuet(valuet);
-      settTarea(valuet.tipotarea)
+      settTarea(valuet.idtipotarea)
     }
 
   
@@ -97,8 +99,9 @@ const Gestareas = () => {
     
    
     useEffect(()=>{
-      axios.get(variables.API_URL+"api/tareas/grdlst").then((res)=>{
+      axios.get(variables.API_URL+"api/tareas/grdlst/").then((res)=>{
         setPost(res.data);
+        setPost1(res.data);
         setFilterResults(res.data)
       }).catch((err)=>{
         toast.error(err.message);
@@ -106,7 +109,7 @@ const Gestareas = () => {
     },[])
     
     const[searchInput, setSearchInput] = useState('');
-    const[filterResults, setFilterResults]=useState(post);
+    const[filterResults, setFilterResults]=useState(post1);
     
     
     
@@ -115,7 +118,7 @@ const Gestareas = () => {
     const searItems=(searchValue)=>{
       setSearchInput(searchValue);
       if(searchInput !== " "){
-      const filterData =  post.filter((item) => {
+      const filterData =  post1.filter((item) => {
         return Object.values(item).join(' ').toLowerCase().includes(searchInput.toLowerCase())
       })
       setFilterResults(filterData);
@@ -137,23 +140,28 @@ const Gestareas = () => {
     const handleCloseDetail =() =>{
       setShowDetail(false)
     }
-
+    
+    
     const handleShowDetail =(id)=>{
-      axios.get(variables.API_URL+"api/tareas/grdlst"+id).then((res)=>{
-        setPost(res.data)
+      console.log(id);
+      axios.get(variables.API_URL+"api/tareas/grdlst/"+id).then((res)=>{
+        setPost3(res.data)
+        console.log(post3)
         
     }).catch((err)=>{
       toast.error(err.message);
     })
+      
       setShowDetail(true);
     }
 
 
     const handleShowEdit =(id) =>{
       setTareaId(id);
-      axios.get(variables.API_URL+"api/tareas/grdlst"+id).then((res)=>{
+      axios.get(variables.API_URL+"api/tareas/grdlst/"+id).then((res)=>{
            
-        setCliente(res.data.cliente);
+        setCliente(res.data.nombrecliente);
+        console.log(cliente)
         settTarea(res.data.tipotarea);
         setInicia(res.data.fechainicio);
         setFin(res.data.fechafin);
@@ -197,10 +205,11 @@ const Gestareas = () => {
             <form className="container" onSubmit={handleSubmit}>
               <label>Select Client</label>
             <AsyncSelect
+            className='text-dark'
         cacheOptions
         defaultOptions
         value={selectedValue}
-        getOptionLabel={e => e.nombrecliente}
+        getOptionLabel={e => e.nombercliente}
         getOptionValue={e => e.idcliente}
         loadOptions={loadOptions}
         onInputChange={(handleInputChange) => setQuery(handleInputChange)}
@@ -209,6 +218,7 @@ const Gestareas = () => {
 
           <label>Select Task</label>
             <AsyncSelect
+            className='text-dark'
         cacheOptions
         defaultOptions
         value={selectedValuet}
@@ -218,30 +228,30 @@ const Gestareas = () => {
         onInputChange={(handleInputChanget) => setQuery(handleInputChanget)}
         onChange={handleChanget}
         />
-        <div className='col-lg-12'>
+        <div className='col-lg-3'>
           <label className='m-2'>Start Date</label>
           <input type="date" onChange={e=>setInicia(e.target.value)}/>
         </div>
-        <div className='col-lg-12'>
+        <div className='col-lg-3'>
           <label className='m-2'>End Date</label>
           <input type="date" onChange={e=> setFin(e.target.value)}/>
         </div>
-        <div className='col-lg-12'>
-          <label className='m-2' >Price</label>
+        <div className='col-lg-5'>
+          <label className='m-2' >Price:</label>
           <input type="number" onChange={e=>setPrecio(e.target.value)}/>
         </div>
-        <div className='col-lg-12'>
+        <div className='col-lg-6'>
           <label className='m-2' >Coment</label>
           <textarea onChange={e=>setComentario(e.target.value)}/>
         </div>
-             <button className='btn btn-success' type='submit'>guardar</button>
+             <button className='btn btn-success mt-4' type='submit'>guardar</button>
             </form>
         </div>
         <div>  
           <div>
-            <Input icon='search' placeholder='Search' onChange={(e) => searItems(e.target.value)} />
+            <Input className='mt-2' icon='search' placeholder='Search' onChange={(e) => searItems(e.target.value)} />
           </div>
-        <table className="table table-bordered text-white">
+        <table className="table table-bordered text-white mt-2">
               <thead className="bg-secondary bg-gradient text-white">
                 <tr className=''>
                   <td>Client</td>
@@ -255,11 +265,11 @@ const Gestareas = () => {
                
                   {filterResults &&
                     filterResults.map((item) => (
-                      <tr key={item.iditarea}>
-                        <td>{item.cliente}</td>
+                      <tr key={item.idtarea}>
+                        <td>{item.nombrecliente}</td>
                         <td>{item.tipotarea}</td>
                         <td>{item.fechainicio}</td>
-                        <td>{item.fechafin}</td>
+                        <td>{item.precio}</td>
                         <td>
                         <a
                             onClick={() => {
@@ -291,6 +301,9 @@ const Gestareas = () => {
                     ))}
               </tbody>
              </table>
+             <footer className=''>
+              <p>@DenOscar</p>
+             </footer>
         </div>
 
         <div>
@@ -360,14 +373,14 @@ const Gestareas = () => {
               <div className='card-title' >           
               </div>
               <div className='card-body'></div> 
-                {post && (
+                {post3 && (
                   <div>
-                    <h2>Client: {post.idcliente}</h2>
-                    <h2>Task: {post.tipotarea}</h2>
-                    <h2>Start Date: {post.fechainicio}</h2>
-                    <h2>End Date: {post.fechafin}</h2>
-                    <h2>Price: {post.precio}</h2>
-                    <h2>Coment: {post.comentario}</h2>
+                    <h2>Client: {post3.nombrecliente}</h2>
+                    <h2>Task: {post3.tipotarea}</h2>
+                    <h2>Start Date: {post3.fechainicio}</h2>
+                    <h2>End Date: {post3.fechafin}</h2>
+                    <h2>Price: {post3.precio}</h2>
+                    <h2>Coment: {post3.comentario}</h2>
                   </div>
                 )}             
             </div>
