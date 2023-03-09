@@ -58,7 +58,7 @@ app.listen(port,()=>{
 //Get de clientes para dropdown clientes
 app.get('/api/clientes/cmblst',(request,response)=> {
 
-    var query = `SELECT ID_CLIENTE idcliente,PRIMER_NOMBRE nombercliente FROM CLIENTES`;
+    var query = `SELECT ID_CLIENTE idcliente,PRIMER_NOMBRE nombrecliente FROM CLIENTES`;
 
     connection.query(query,function(err, rows,fields){
    
@@ -68,8 +68,7 @@ app.get('/api/clientes/cmblst',(request,response)=> {
                  console.log(err);
             }
 
-
-        response.send(rows);
+        response.json({rows});
 
     });
 
@@ -86,7 +85,7 @@ app.get('/api/tipotareas/cmblst',(request,response)=> {
                  response.send('Failed');
                  console.log(err);
             }
-        response.send(rows);
+        response.json({rows});
 
     });
 
@@ -114,7 +113,7 @@ app.get('/api/tareas/grdlst',(request,response)=> {
                  response.send('Failed');
                  console.log(err);
             }
-        response.send(rows);
+        response.json({rows});
 
     });
 
@@ -146,7 +145,8 @@ app.get('/api/tareas/grdlst/:id',(request,response)=> {
                  response.send('Failed');
                  console.log(err);
             }
-        response.send(rows);
+
+        response.json({rows});
 
     });
 
