@@ -68,7 +68,7 @@ app.get('/api/clientes/cmblst',(request,response)=> {
                  console.log(err);
             }
 
-        response.json({rows});
+        response.json(rows);
 
     });
 
@@ -78,6 +78,7 @@ app.get('/api/clientes/cmblst',(request,response)=> {
 app.get('/api/tipotareas/cmblst',(request,response)=> {
 
     var query = `SELECT ID_TIPO_TAREA idtipotarea,TIPO_TAREA tipotarea FROM TIPO_TAREA`;
+    
     connection.query(query,function(err, rows,fields){
 
             if(err){
@@ -85,7 +86,7 @@ app.get('/api/tipotareas/cmblst',(request,response)=> {
                  response.send('Failed');
                  console.log(err);
             }
-        response.json({rows});
+        response.json(rows);
 
     });
 
