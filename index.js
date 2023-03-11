@@ -58,7 +58,9 @@ app.listen(port,()=>{
 //Get de clientes para dropdown clientes
 app.get('/api/clientes/cmblst',(request,response)=> {
 
-    var query = `SELECT ID_CLIENTE idcliente,PRIMER_NOMBRE nombrecliente FROM CLIENTES`;
+    var query = `SELECT ID_CLIENTE idcliente
+                        ,PRIMER_NOMBRE nombrecliente 
+                 FROM CLIENTES`;
 
     connection.query(query,function(err, rows,fields){
    
@@ -71,6 +73,14 @@ app.get('/api/clientes/cmblst',(request,response)=> {
         response.json(rows);
 
     });
+
+});
+
+
+
+app.get('/api/asignaemple/grdlst',(request,response)=>{
+
+    let query =``;
 
 });
 
@@ -192,7 +202,7 @@ app.post('/api/tareas',(request,response)=> {
 
 
 // Actualizar tarea existente
-app.put('/api/tareas',(request,response)=> {
+app.put('/api/tareas/:id',(request,response)=> {
 
     var query = `
          UPDATE TAREAS
@@ -212,7 +222,7 @@ app.put('/api/tareas',(request,response)=> {
         request.body['fechafin'],
         request.body['precio'],
         request.body['comentario'],
-        request.body['idtarea']
+        request.params.id
     ];
 
             connection.query(query,values,function(err, rows,fields){
