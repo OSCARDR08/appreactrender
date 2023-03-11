@@ -98,7 +98,8 @@ app.get('/api/tareas/grdlst',(request,response)=> {
                      T.ID_TAREA idtarea
                     ,C.PRIMER_NOMBRE nombrecliente
 	                ,TT.TIPO_TAREA tipotarea
-	                ,T.FECHA_INICIO fechainicio
+	                ,DATE_FORMAT(FECHA_INICIO,'%Y-%m-%d') fechainicio
+                    ,DATE_FORMAT(FECHA_FIN,'%Y-%m-%d') fechafin
 	                ,T.PRECIO_TAREA  precio
                     ,COMENTARIO comentario                   
                  FROM CLIENTES C 
