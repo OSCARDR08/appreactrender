@@ -92,14 +92,15 @@ app.get('/api/tipotareas/cmblst',(request,response)=> {
 
 });
 
+//Get de tareas para llenar grid
 app.get('/api/tareas/grdlst',(request,response)=> {
 
     var query = `SELECT
                      T.ID_TAREA idtarea
                     ,C.PRIMER_NOMBRE nombrecliente
 	                ,TT.TIPO_TAREA tipotarea
-	                ,DATE_FORMAT(FECHA_INICIO,'%Y-%m-%d') fechainicio
-                    ,DATE_FORMAT(FECHA_FIN,'%Y-%m-%d') fechafin
+	                ,DATE_FORMAT(T.FECHA_INICIO,'%Y-%m-%d') fechainicio
+                    ,DATE_FORMAT(T.FECHA_FIN,'%Y-%m-%d') fechafin
 	                ,T.PRECIO_TAREA  precio
                     ,COMENTARIO comentario                   
                  FROM CLIENTES C 
@@ -115,20 +116,21 @@ app.get('/api/tareas/grdlst',(request,response)=> {
                  response.send('Failed');
                  console.log(err);
             }
-        response.json({rows});
+        response.json(rows);
 
     });
 
 });
 
-
+//Get de tareas para llenar grid con filtro
 app.get('/api/tareas/grdlst/:id',(request,response)=> {
 
     var query = `SELECT
                      T.ID_TAREA idtarea
                     ,C.PRIMER_NOMBRE nombrecliente
 	                ,TT.TIPO_TAREA tipotarea
-	                ,T.FECHA_INICIO fechainicio
+	                ,DATE_FORMAT(T.FECHA_INICIO,'%Y-%m-%d') fechainicio
+                    ,DATE_FORMAT(T.FECHA_FIN,'%Y-%m-%d') fechafin
 	                ,T.PRECIO_TAREA  precio
                     ,COMENTARIO comentario                   
                  FROM CLIENTES C 
@@ -148,7 +150,7 @@ app.get('/api/tareas/grdlst/:id',(request,response)=> {
                  console.log(err);
             }
 
-        response.json({rows});
+        response.json(rows);
 
     });
 
@@ -216,7 +218,6 @@ app.put('/api/tareas',(request,response)=> {
             connection.query(query,values,function(err, rows,fields){
 
                     if(err){
-
                         response.send('Failed');
                         console.log(err);
                     }
@@ -224,6 +225,9 @@ app.put('/api/tareas',(request,response)=> {
 
             });
 });
+
+
+
 
 
 app.get('*',(request,response)=>{
