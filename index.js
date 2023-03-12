@@ -77,17 +77,33 @@ app.get('/api/clientes/cmblst',(request,response)=> {
 });
 
 
+//Get de empleados para dropdown empleados
+app.get('/api/empleados/cmblst',(request,response)=>{
 
-app.get('/api/asignaemple/grdlst',(request,response)=>{
+    let query =`SELECT ID_EMPLEADO    idemple
+                       ,PRIMER_NOMBRE nomemple 
+                FROM EMPLEADOS`;
 
-    let query =``;
+    connection.query(query,function(err, rows,fields){
+
+        if(err){
+
+            console.log('Error');
+            response.send('Failed');
+        }
+
+       response.json(rows);
+
+    });
 
 });
 
 //Get de tipos de tareas para dropdown tipo tareas
 app.get('/api/tipotareas/cmblst',(request,response)=> {
 
-    var query = `SELECT ID_TIPO_TAREA idtipotarea,TIPO_TAREA tipotarea FROM TIPO_TAREA`;
+    var query = `SELECT ID_TIPO_TAREA idtipotarea
+                       ,TIPO_TAREA tipotarea 
+                 FROM TIPO_TAREA`;
     
     connection.query(query,function(err, rows,fields){
 
@@ -167,6 +183,33 @@ app.get('/api/tareas/grdlst/:id',(request,response)=> {
 });
 
 
+//Get asignaciones de empleados a tareas grid
+
+app.get('/api/asignaemple/grdlst',(request,response)=>{
+
+    let query = `SELECT  A.ID_TAREA  idtarea
+                        ,A.ID_EMPLEADO idemple                       
+                        ,E.PRIMER_NOMBRE nombre      
+                        ,HORAS_TRABAJADAS horas
+                        ,PRECIO_HORA precio
+                        ,(HORAS_TRABAJADAS*PRECIO_HORA) pago
+                         FROM EMPLEADOS_TAREAS A 
+                      JOIN EMPLEADOS E 
+                          ON A.ID_EMPLEADO=E.ID_EMPLEADO`;
+
+    connection.query(query,(err,rows,fields)=>{
+
+                if(err){
+                    console.log(err);
+                    response.send('failed');
+                }
+
+                response.json(rows);
+
+    });
+
+});
+
 //Agregar nueva tarea
 app.post('/api/tareas',(request,response)=> {
 
@@ -199,6 +242,33 @@ app.post('/api/tareas',(request,response)=> {
     });
 
 });
+
+
+//Post de insercion nuevo empleado tarea
+app.post('/api/asignaemple',(request,response)=> {
+
+
+    var query = `insert into EMPLEADOS_TAREAS values(?,?,?,?)`;
+    var values =  [   
+        request.body['idemple'],
+        request.body['idtarea'],
+        request.body['horas'],
+        request.body['precio']     
+    ];
+    
+    connection.query(query,values,function(err, rows,fields){
+
+            if(err){
+
+                 response.send('Failed');
+                 console.log(err);
+            }
+        response.json('Task Added Success!');
+
+    });
+
+});
+
 
 
 // Actualizar tarea existente
@@ -237,7 +307,67 @@ app.put('/api/tareas/:id',(request,response)=> {
 });
 
 
+// Actualizar tarea existente
+app.put('/api/tareas/:id',(request,response)=> {
 
+    var query = `
+         UPDATE TAREAS
+         SET
+            ID_TIPO_TAREA = ?,
+            ID_CLIENTE = ?,
+            FECHA_INICIO = ?,
+            FECHA_FIN = ?,
+            PRECIO_TAREA = ?,
+            COMENTARIO=?
+         WHERE ID_TAREA = ?`;
+   
+    var values =  [
+        request.body['idtipotarea'],
+        request.body['idcliente'],
+        request.body['fechainicio'],
+        request.body['fechafin'],
+        request.body['precio'],
+        request.body['comentario'],
+        request.params.id
+    ];
+
+            connection.query(query,values,function(err, rows,fields){
+
+                    if(err){
+                        response.send('Failed');
+                        console.log(err);
+                    }
+                response.json('Task Updataed Successfully!');
+
+            });
+});
+
+// Actualizar asignacion de empleados
+app.put('/api/asignaemple/:idtarea/:idemple',(request,response)=> {
+
+    var query = `UPDATE  EMPLEADOS_TAREAS 
+                    SET  HORAS_TRABAJADAS = ?
+                        ,PRECIO_HORA=?
+                 WHERE ID_EMPLEADO=? 
+                     AND ID_TAREA=?`;
+   
+    var values =  [
+        request.body['horas'],
+        request.body['precio'], 
+        request.params.idtarea,
+        request.params.idemple               
+    ];
+
+            connection.query(query,values,function(err, rows,fields){
+
+                    if(err){
+                        response.send('Failed');
+                        console.log(err);
+                    }
+                response.json('Employee Updataed Successfully!');
+
+            });
+});
 
 
 app.get('*',(request,response)=>{
