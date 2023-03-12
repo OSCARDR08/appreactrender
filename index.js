@@ -185,7 +185,7 @@ app.get('/api/tareas/grdlst/:id',(request,response)=> {
 
 //Get asignaciones de empleados a tareas grid
 
-app.get('/api/asignaemple/grdlst',(request,response)=>{
+app.get('/api/asignaemple/grdlst/:idtarea',(request,response)=>{
 
     let query = `SELECT  A.ID_TAREA  idtarea
                         ,A.ID_EMPLEADO idemple                       
@@ -195,9 +195,11 @@ app.get('/api/asignaemple/grdlst',(request,response)=>{
                         ,(HORAS_TRABAJADAS*PRECIO_HORA) pago
                          FROM EMPLEADOS_TAREAS A 
                       JOIN EMPLEADOS E 
-                          ON A.ID_EMPLEADO=E.ID_EMPLEADO`;
+                          ON A.ID_EMPLEADO=E.ID_EMPLEADO WHERE ID_TAREA=?`;
 
-    connection.query(query,(err,rows,fields)=>{
+    let values = [request.params.idtarea];                    
+
+    connection.query(query,values,(err,rows,fields)=>{
 
                 if(err){
                     console.log(err);
